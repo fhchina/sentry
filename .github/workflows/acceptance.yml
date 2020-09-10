@@ -6,6 +6,14 @@ on:
   pull_request:
 
 jobs:
+    debug:
+      runs-on: ubuntu-16.04
+      steps:
+        - run: echo ${{ github.event.commits[0] }}
+        - if: always()
+          run: echo ${{ github.event.commits[0].message }}
+        - if: always()
+          run: echo ${{ github.event.commits }} | jq -r 'join(",")'
     getsentry:
       if: ${{ github.ref != 'refs/heads/master' && contains(github.event.commits[0].message, '#test-getsentry') }}
       runs-on: ubuntu-16.04
