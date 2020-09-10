@@ -9,6 +9,7 @@ jobs:
     debug:
       runs-on: ubuntu-16.04
       steps:
+        - uses: actions/checkout@v2
         - name : GITHUB CONTEXT
           env:
             GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -17,7 +18,7 @@ jobs:
         - name: Parse commit message
           id: commit
           run: |
-            echo ::set-env name=commitmsg::$(git log --format=%B -n 1 ${{ github.event.after }})
+            echo ::set-env name=commitmsg::$(git log --format=%B ${{ github.event.before }}...${{ github.event.after }})
 
         - name: show commit message
           run : echo $commitmsg
