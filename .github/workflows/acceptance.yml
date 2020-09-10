@@ -6,8 +6,10 @@ on:
   pull_request:
 
 jobs:
-    debug:
+    commit-parse:
       runs-on: ubuntu-16.04
+      outputs:
+        commit: ${{ steps.commit.outputs.message }}
       steps:
         - uses: actions/checkout@v2
         - name : GITHUB CONTEXT
@@ -18,13 +20,11 @@ jobs:
         - name: Parse commit message
           id: commit
           run: |
-            echo ::set-env name=commitmsg::$(git log --format=%B ${{ github.event.before }}...${{ github.event.after }})
-
-        - name: show commit message
-          run : echo $commitmsg
+            echo ::set-env name=message::$(git log --format=%B ${{ github.event.before }}...${{ github.event.after }})
 
     getsentry:
-      if: ${{ github.ref != 'refs/heads/master' && contains(github.event.commits[0].message, '#test-getsentry') }}
+      needs: commit-parse
+      if: ${{ github.ref != 'refs/heads/master' && contains(needs.commit-parse.outputs.commit, '#test-getsentry') }}
       runs-on: ubuntu-16.04
       steps:
         - name: getsentry token
