@@ -16,7 +16,27 @@ jobs:
           with:
             ref: ${{ github.event.pull_request.head.sha }}
 
-        - name : GITHUB CONTEXT
+        - uses: actions/github-script@v3
+          id: api
+          with:
+            result-encoding: string
+            script: |
+              github.pulls.listCommits({
+                owner: '${{ github.repository_owner }}',
+                repo: '${{ github.event.repository.name }}',
+                pull_number: ${{ github.event.number }},
+              });
+
+        - id: parse-api
+          env:
+            MESSAGES: ${{ steps.api.output.results }} | jq -r '.[].commit.message'
+          run: |
+            echo "$MESSAGES"
+            echo ::set-env name=message::$(MESSAGES)
+
+
+
+        - name: GITHUB CONTEXT
           env:
             GITHUB_CONTEXT: ${{ toJson(github) }}
           run: echo "$GITHUB_CONTEXT"
@@ -24,7 +44,7 @@ jobs:
         - name: Parse commit message
           id: commit
           run: |
-            echo ::set-env name=message::$(git log --format=%B ${{ github.event.before }}...${{ github.event.after }})
+            echo ::set-env name=message::$(git log --format=%B ${{ github.event.after }})
 
     getsentry:
       needs: commit-parse
