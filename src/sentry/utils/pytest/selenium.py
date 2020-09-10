@@ -135,7 +135,7 @@ class Browser(object):
 
     def elements(self, selector=None, xpath=None):
         """
-        Get elements from the page. This method will wait for the element to show up.
+        Get elements from the page. This method will wait for the element to show up
         """
 
         if xpath is not None:
