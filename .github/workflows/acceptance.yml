@@ -12,10 +12,11 @@ jobs:
         - name : GITHUB CONTEXT
           env:
             GITHUB_CONTEXT: ${{ toJson(github) }}
+          run: echo "$GITHUB_CONTEXT"
+
         - name: Parse commit message
           id: commit
           run: |
-            echo "$GITHUB_CONTEXT"
             echo ::set-env name=commitmsg::$(git log --format=%B -n 1 ${{ github.event.after }})
 
         - name: show commit message
