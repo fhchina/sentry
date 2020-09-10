@@ -13,9 +13,11 @@ jobs:
         commit: ${{ steps.commit.outputs.message }}
       steps:
         - uses: actions/checkout@v2
+          with:
+            ref: ${{ github.event.pull_request.head.sha }}
+
         - name : GITHUB CONTEXT
           env:
-            test
             GITHUB_CONTEXT: ${{ toJson(github) }}
           run: echo "$GITHUB_CONTEXT"
 
